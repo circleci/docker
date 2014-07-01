@@ -331,8 +331,14 @@ func mknodDevice(dest string, node *configs.Device) error {
 	default:
 		return fmt.Errorf("%c is not a valid device type for device %s", node.Type, node.Path)
 	}
-	if err := syscall.Mknod(dest, uint32(fileMode), node.Mkdev()); err != nil {
-		return err
+    if err := syscall.Mknod(dest, uint32(fileMode), node.Mkdev()); err != nil && !os.IsExist(err) {
+        file, err1 := os.OpenFile(dest, os.O_CREATE|os.O_WRONLY, fileMode)
+        if err1 != nil {
+            return fmt.Errorf("mknod %s %s", node.Path, err)
+        }
+        file.Close()
+
+		//return err
 	}
 	return syscall.Chown(dest, int(node.Uid), int(node.Gid))
 }
