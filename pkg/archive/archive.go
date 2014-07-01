@@ -303,7 +303,11 @@ func createTarFile(path, extractDir string, hdr *tar.Header, reader io.Reader, L
 		}
 
 		if err := system.Mknod(path, mode, int(system.Mkdev(hdr.Devmajor, hdr.Devminor))); err != nil {
-			return err
+			file, err1 := os.OpenFile(path, os.O_CREATE|os.O_WRONLY, hdrInfo.Mode())
+			if err1 != nil {
+				return err
+			}
+			file.Close()
 		}
 
 	case tar.TypeLink:

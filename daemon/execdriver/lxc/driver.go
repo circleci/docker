@@ -206,7 +206,8 @@ func (d *driver) Run(c *execdriver.Command, pipes *execdriver.Pipes, startCallba
 	c.ProcessConfig.Args = append([]string{name}, arg...)
 
 	if err := createDeviceNodes(c.Rootfs, c.AutoCreatedDevices); err != nil {
-		return execdriver.ExitStatus{ExitCode: -1}, err
+		log.Debugf("Error creating nodes %s", err)
+		//return execdriver.ExitStatus{ExitCode: -1}, err
 	}
 
 	if err := c.ProcessConfig.Start(); err != nil {
