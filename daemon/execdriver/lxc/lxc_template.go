@@ -85,6 +85,23 @@ lxc.mount.entry = {{$value.Source}} {{escapeFstabSpaces $ROOTFS}}/{{escapeFstabS
 {{end}}
 {{end}}
 
+# User ns
+lxc.cgroup.devices.deny =
+lxc.cgroup.devices.allow =
+lxc.devttydir =
+
+lxc.mount.entry = /dev/null dev/null none bind,create=file 0 0
+lxc.mount.entry = /dev/console dev/console none bind,create=file 0 0
+lxc.mount.entry = /dev/full dev/full none bind,create=file 0 0
+lxc.mount.entry = /dev/random dev/random none bind,create=file 0 0
+lxc.mount.entry = /dev/tty dev/tty none bind,create=file 0 0
+lxc.mount.entry = /dev/urandom dev/urandom none bind,create=file 0 0
+lxc.mount.entry = /dev/zero dev/zero none bind,create=file 0 0
+
+# Extra fstab entries as mountall can't mount those by itself
+lxc.mount.entry = /sys/firmware/efi/efivars sys/firmware/efi/efivars none bind,optional 0 0
+lxc.mount.entry = /proc/sys/fs/binfmt_misc proc/sys/fs/binfmt_misc none bind,optional 0 0
+
 # limits
 {{if .Resources}}
 {{if .Resources.Memory}}
