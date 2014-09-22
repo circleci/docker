@@ -120,6 +120,7 @@ func (d *driver) Run(c *execdriver.Command, pipes *execdriver.Pipes, startCallba
 		"lxc-start",
 		"-n", c.ID,
 		"-f", configPath,
+        "-F", // Foreground
 	}
 
 	// From lxc>=1.1 the default behavior is to daemonize containers after start
