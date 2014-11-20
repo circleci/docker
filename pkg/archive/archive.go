@@ -341,7 +341,7 @@ func createTarFile(path, extractDir string, hdr *tar.Header, reader io.Reader, L
 
 	for key, value := range hdr.Xattrs {
 		if err := system.Lsetxattr(path, key, []byte(value), 0); err != nil {
-			return err
+            logrus.Debugf("Unable to set extended attribute for %s: %s=%s", path, key, value)
 		}
 	}
 
