@@ -124,9 +124,9 @@ func (d *driver) Run(c *execdriver.Command, pipes *execdriver.Pipes, startCallba
 		dataPath = d.containerDir(c.ID)
 	)
 
-	if c.Network == nil || (c.Network.NamespacePath == "" && c.Network.ContainerID == "") {
-		return execdriver.ExitStatus{ExitCode: -1}, fmt.Errorf("empty namespace path for non-container network")
-	}
+	//if c.Network == nil || (c.Network.NamespacePath == "" && c.Network.ContainerID == "") {
+	//	return execdriver.ExitStatus{ExitCode: -1}, fmt.Errorf("empty namespace path for non-container network")
+	//}
 
 	container, err := d.createContainer(c)
 	if err != nil {
@@ -183,14 +183,14 @@ func (d *driver) Run(c *execdriver.Command, pipes *execdriver.Pipes, startCallba
 			"--share-net", c.Network.ContainerID,
 		)
 	} else {
-		proc, err = setupNetNs(c.Network.NamespacePath)
-		if err != nil {
-			return execdriver.ExitStatus{ExitCode: -1}, err
-		}
-
-		pidStr := fmt.Sprintf("%d", proc.Pid)
-		params = append(params,
-			"--share-net", pidStr)
+		//		proc, err = setupNetNs(c.Network.NamespacePath)
+		//		if err != nil {
+		//			return execdriver.ExitStatus{ExitCode: -1}, err
+		//		}
+		//
+		//		pidStr := fmt.Sprintf("%d", proc.Pid)
+		//		params = append(params,
+		//			"--share-net", pidStr)
 	}
 	if c.Ipc != nil {
 		if c.Ipc.ContainerID != "" {

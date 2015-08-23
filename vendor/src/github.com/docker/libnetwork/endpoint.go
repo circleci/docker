@@ -399,7 +399,7 @@ func (ep *endpoint) Join(containerID string, options ...EndpointOption) error {
 	network.Lock()
 	driver := network.driver
 	nid := network.id
-	ctrlr := network.ctrlr
+	//ctrlr := network.ctrlr
 	network.Unlock()
 
 	ep.processOptions(options...)
@@ -437,21 +437,21 @@ func (ep *endpoint) Join(containerID string, options ...EndpointOption) error {
 		return err
 	}
 
-	sb, err := ctrlr.sandboxAdd(sboxKey, !container.config.useDefaultSandBox, ep)
-	if err != nil {
-		return fmt.Errorf("failed sandbox add: %v", err)
-	}
-	defer func() {
-		if err != nil {
-			ctrlr.sandboxRm(sboxKey, ep)
-		}
-	}()
+	//sb, err := ctrlr.sandboxAdd(sboxKey, !container.config.useDefaultSandBox, ep)
+	//if err != nil {
+	//	return fmt.Errorf("failed sandbox add: %v", err)
+	//}
+	//defer func() {
+	//	if err != nil {
+	//		ctrlr.sandboxRm(sboxKey, ep)
+	//	}
+	//}()
 
 	if err := network.ctrlr.updateEndpointToStore(ep); err != nil {
 		return err
 	}
 
-	container.data.SandboxKey = sb.Key()
+	container.data.SandboxKey = ""
 	return nil
 }
 

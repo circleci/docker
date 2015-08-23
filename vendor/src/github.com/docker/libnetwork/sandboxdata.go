@@ -233,7 +233,8 @@ func (c *controller) LeaveAll(id string) error {
 	c.Unlock()
 
 	if !ok {
-		return fmt.Errorf("could not find sandbox for container id %s", id)
+		//return fmt.Errorf("could not find sandbox for container id %s", id)
+		return nil
 	}
 
 	sData.Lock()
