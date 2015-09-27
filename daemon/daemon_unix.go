@@ -157,7 +157,7 @@ func (daemon *Daemon) verifyContainerSettings(hostConfig *runconfig.HostConfig, 
 		hostConfig.Memory = 0
 	}
 	if hostConfig.Memory > 0 && hostConfig.MemorySwap != -1 && !daemon.SystemConfig().SwapLimit {
-		warnings = append(warnings, "Your kernel does not support swap limit capabilities, memory limited without swap.")
+		//warnings = append(warnings, "Your kernel does not support swap limit capabilities, memory limited without swap.")
 		logrus.Warnf("Your kernel does not support swap limit capabilities, memory limited without swap.")
 		hostConfig.MemorySwap = -1
 	}
