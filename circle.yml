@@ -1,0 +1,36 @@
+machine:
+  pre:
+    - echo 'DOCKER_OPTS="-s btrfs -e lxc -D --userland-proxy=false --iptables=true"' | sudo tee -a /etc/default/docker
+    - sudo curl -L -o /usr/bin/docker 'https://s3-external-1.amazonaws.com/circle-downloads/docker-1.8.2-circleci'
+    - sudo chmod 0755 /usr/bin/docker
+  services:
+    - docker
+
+dependencies:
+  override:
+    - echo 0
+
+test:
+  override:
+    #### Test docker run ####
+    # Test run
+    - docker run ubuntu echo 'hello, world'
+
+    # Test -p (--publish)
+    - docker run -d -p 3000:80 nginx && sleep 3 && curl localhost:3000
+
+    # Test -P (--publish-all)
+    - export n=test-publish-all && docker run -d --name $n -P nginx && sleep 3 && curl $(docker port $n | grep 80 |awk '{print $3}')
+
+    # Test --link
+    - export n=test-link && docker run -d --name $n nginx && docker run --link $n ubuntu bash -c "apt-get install -y curl && curl $n"
+
+    # Test -v (--volume)
+    - echo "mount me" > ./mountme.txt && docker run -v /home/ubuntu/docker:/tmp/test-vol ubuntu cat /tmp/test-vol/mountme.txt
+
+    #### Test docker build ####
+    - mkdir build-dir && cd build-dir && echo 'from ubuntu' > Dockerfile && docker build -t kimh/docker-circleci .
+
+    #### Test docker push ####
+    - docker login -e $docker_email -u $docker_user -p $docker_pass && docker push kimh/docker-circleci
+
