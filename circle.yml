@@ -12,6 +12,8 @@ dependencies:
 
 test:
   override:
+    - docker version
+
     #### Test docker run ####
     # Test run
     - docker run ubuntu echo 'hello, world'
