@@ -485,9 +485,13 @@ func createDeviceNode(rootfs string, node *configs.Device) error {
 		return fmt.Errorf("mknod %s %s", node.Path, err)
 	}
 
+	logrus.Debugf("debug kim: 1")
+
 	if err := syscall.Chown(dest, int(node.Uid), int(node.Gid)); err != nil {
 		return fmt.Errorf("chown %s to %d:%d", node.Path, node.Uid, node.Gid)
 	}
+
+	logrus.Debugf("debug kim: 2")
 
 	return nil
 }
