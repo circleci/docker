@@ -1450,9 +1450,9 @@ func (container *Container) setupIpcDirs() error {
 		}
 
 		logrus.Infof("debug kim 1")
-		if err := os.Chown(mqueuePath, rootUID, rootGID); err != nil {
-			return err
-		}
+		//if err := os.Chown(mqueuePath, rootUID, rootGID); err != nil {
+		//	return err
+		//}
 		logrus.Infof("debug kim 2")
 	}
 
