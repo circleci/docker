@@ -18,6 +18,7 @@ import (
 	"syscall"
 	"unsafe"
 
+	logrus "github.com/Sirupsen/logrus"
 	"github.com/docker/docker/daemon/graphdriver"
 	"github.com/docker/docker/pkg/idtools"
 	"github.com/docker/docker/pkg/mount"
@@ -50,7 +51,8 @@ func Init(home string, options []string, uidMaps, gidMaps []idtools.IDMap) (grap
 	}
 
 	if err := mount.MakePrivate(home); err != nil {
-		return nil, err
+		logrus.Debugf("btrfs error: %s", err)
+		//return nil, err
 	}
 
 	driver := &Driver{
