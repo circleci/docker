@@ -1204,10 +1204,13 @@ func (container *Container) mountVolumes() error {
 			return err
 		}
 
-		opts := "rbind,ro"
-		if m.Writable {
-			opts = "rbind,rw"
-		}
+		// There was an issue that docker cp didn't work. To workaround this,
+		// I had to avoid rbind. I couldn't figure out why rbind doesn't work.
+		// https://discuss.circleci.com/t/unable-to-use-docker-cp-but-it-worked-2-days-ago/1137
+		opts := "bind,rw"
+		//if m.Writable {
+		//	opts = "rbind,rw"
+		//}
 
 		if err := mount.Mount(m.Source, dest, "bind", opts); err != nil {
 			return err
