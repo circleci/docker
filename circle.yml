@@ -35,4 +35,4 @@ test:
     - docker login -e $docker_email -u $docker_user -p $docker_pass && docker push kimh/docker-circleci
 
     #### Test docker cp ####
-    - export n=test-cp && docker run --name $n ubuntu uptime && docker cp $test-cp:/etc/hosts . && cat hosts
+    - export n=test-cp && docker run --name $n ubuntu true && docker cp $n:/etc/hosts . && cat hosts
