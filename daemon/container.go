@@ -1091,10 +1091,10 @@ func (container *Container) mountVolumes() error {
 			return err
 		}
 
-		opts := "rbind,ro"
-		if m.Writable {
-			opts = "rbind,rw"
-		}
+		opts := "bind,rw"
+		//if m.Writable {
+		//	opts = "rbind,rw"
+		//}
 
 		if err := mount.Mount(m.Source, dest, "bind", opts); err != nil {
 			return err
