@@ -36,3 +36,10 @@ test:
     #### Test docker push ####
     - docker login -e $docker_email -u $docker_user -p $docker_pass && docker push kimh/docker-circleci
 
+    #### Test docker caching workaround ####
+    # Test save
+    - docker save kimh/docker-circleci > image.tar
+
+    # Test load
+    - docker load -i image.tar
+
