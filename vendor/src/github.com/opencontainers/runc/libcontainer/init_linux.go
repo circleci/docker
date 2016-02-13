@@ -233,9 +233,12 @@ func fixStdioPermissions(u *user.ExecUser) error {
 		if s.Rdev == null.Rdev {
 			continue
 		}
-		if err := syscall.Fchown(int(fd), u.Uid, u.Gid); err != nil {
-			return err
-		}
+
+		// Patched by CircleCI
+		// Getting 'Operation not permitted' for some files in our container
+		//if err := syscall.Fchown(int(fd), u.Uid, u.Gid); err != nil {
+		//	return err
+		//}
 	}
 	return nil
 }

@@ -50,7 +50,6 @@ func (l *linuxStandardInit) Init() error {
 	if err := setOomScoreAdj(l.config.Config.OomScoreAdj); err != nil {
 		return err
 	}
-
 	label.Init()
 	// InitializeMountNamespace() can be executed only for a new mount namespace
 	if l.config.Config.Namespaces.Contains(configs.NEWNS) {
@@ -69,16 +68,14 @@ func (l *linuxStandardInit) Init() error {
 	if err := label.SetProcessLabel(l.config.Config.ProcessLabel); err != nil {
 		return err
 	}
-
 	for key, value := range l.config.Config.Sysctl {
 		if err := writeSystemProperty(key, value); err != nil {
 			return err
 		}
 	}
-
 	for _, path := range l.config.Config.ReadonlyPaths {
 		if err := remountReadonly(path); err != nil {
-			return err
+			//return err
 		}
 	}
 	for _, path := range l.config.Config.MaskPaths {

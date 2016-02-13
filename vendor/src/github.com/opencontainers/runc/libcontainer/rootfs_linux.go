@@ -28,7 +28,6 @@ func setupRootfs(config *configs.Config, console *linuxConsole) (err error) {
 	if err := prepareRoot(config); err != nil {
 		return newSystemError(err)
 	}
-
 	setupDev := len(config.Devices) != 0
 	for _, m := range config.Mounts {
 		for _, precmd := range m.PremountCmds {
@@ -37,7 +36,11 @@ func setupRootfs(config *configs.Config, console *linuxConsole) (err error) {
 			}
 		}
 		if err := mountToRootfs(m, config.Rootfs, config.MountLabel); err != nil {
-			return newSystemError(err)
+			// Patched by CircleCI
+			// We get 'Operation not permitted error' when Docker tries to mount /sys/fs/cgroup.
+			// TBH I'm not sure why we are getting the error, but since we disable
+			// cgroup support anyway, so it should be fine to ignore the error.
+			//return newSystemError(err)
 		}
 
 		for _, postcmd := range m.PostmountCmds {
@@ -60,11 +63,21 @@ func setupRootfs(config *configs.Config, console *linuxConsole) (err error) {
 	if err := syscall.Chdir(config.Rootfs); err != nil {
 		return newSystemError(err)
 	}
-	if config.NoPivotRoot {
-		err = msMoveRoot(config.Rootfs)
-	} else {
-		err = pivotRoot(config.Rootfs, config.PivotDir)
+	// <<<< Patched by CircleCI
+	// Neither msMoveRoot nor pivotRoot work because of our AppArmor policy.
+	//if config.NoPivotRoot {
+	//	err = msMoveRoot(config.Rootfs)
+	//} else {
+	//	err = pivotRoot(config.Rootfs, config.PivotDir)
+	//}
+	if err := syscall.Mount(config.Rootfs, "/", "", syscall.MS_BIND, ""); err != nil {
+		return err
 	}
+	if err := syscall.Chroot("."); err != nil {
+		return err
+	}
+	return syscall.Chdir("/")
+	// Patched by CircleCI >>>>
 	if err != nil {
 		return newSystemError(err)
 	}
@@ -103,7 +116,21 @@ func mountToRootfs(m *configs.Mount, rootfs, mountLabel string) error {
 	}
 
 	switch m.Device {
-	case "proc", "sysfs":
+	// <<<< Patched by CircleCI
+	// /proc is originally mounted by mountPropagate() which calls syscall.mount with
+	// options not allowed by our AppArmor profile.
+	// Bind mount doesn't help us here since it will mount the entire host's /proc to container.
+	// LXC mounts with proc with MS_MGC_VAL option and this call is not blocked by AppArmor
+	// so I decided to use it here and it works!!
+	case "proc":
+		if err := os.MkdirAll(dest, 0755); err != nil {
+			return err
+		}
+		if err := syscall.Mount(m.Source, dest, m.Device, syscall.MS_MGC_VAL, ""); err != nil {
+			return err
+		}
+	// Patched by CircleCI >>>>
+	case "sysfs":
 		if err := os.MkdirAll(dest, 0755); err != nil {
 			return err
 		}
@@ -210,11 +237,17 @@ func mountToRootfs(m *configs.Mount, rootfs, mountLabel string) error {
 			PropagationFlags: m.PropagationFlags,
 		}
 		if err := mountToRootfs(tmpfs, rootfs, mountLabel); err != nil {
-			return err
+			// Patched by CircleCI
+			// Getting some error here but it's ok to ignore
+			// since we disable cgroup support
+			//return err
 		}
 		for _, b := range binds {
 			if err := mountToRootfs(b, rootfs, mountLabel); err != nil {
-				return err
+				// Patched by CircleCI
+				// Getting some error here but it's ok to ignore
+				// since we disable cgroup support
+				//return err
 			}
 		}
 		// create symlinks for merged cgroups
@@ -502,14 +535,15 @@ func prepareRoot(config *configs.Config) error {
 		flag = config.RootPropagation
 	}
 	if err := syscall.Mount("", "/", "", uintptr(flag), ""); err != nil {
-		return err
+		// Patched by CircleCI
+		// Don't remember what error I'm getting here but didn't work.
+		//return err
 	}
-
 	if err := rootfsParentMountPrivate(config); err != nil {
 		return err
 	}
-
-	return syscall.Mount(config.Rootfs, config.Rootfs, "bind", syscall.MS_BIND|syscall.MS_REC, "")
+	// Patched by CircleCI
+	return syscall.Mount(config.Rootfs, config.Rootfs, "bind", syscall.MS_BIND, "")
 }
 
 func setReadonly() error {

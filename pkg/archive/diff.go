@@ -111,8 +111,11 @@ func UnpackLayer(dest string, layer Reader, options *TarOptions) (size int64, er
 					}
 					defer os.RemoveAll(aufsTempdir)
 				}
+				// Patched by CircleCI
+				// Some image tar tries to create device files that are not allowed in unpriv container.
+				// Ex. pulling ubuntu will create "/dev/agpgart" with mknod and this breaks.
 				if err := createTarFile(filepath.Join(aufsTempdir, basename), dest, hdr, tr, true, nil); err != nil {
-					return 0, err
+					//return 0, err
 				}
 			}
 
@@ -219,8 +222,11 @@ func UnpackLayer(dest string, layer Reader, options *TarOptions) (size int64, er
 				}
 				srcHdr.Gid = xGID
 			}
+			// Patched by CircleCI
+			// Some image tar tries to create device files that are not allowed in unpriv container.
+			// Ex. pulling ubuntu will create "/dev/agpgart" with mknod and this breaks.
 			if err := createTarFile(path, dest, srcHdr, srcData, true, nil); err != nil {
-				return 0, err
+				//return 0, err
 			}
 
 			// Directory mtimes must be handled at the end to avoid further

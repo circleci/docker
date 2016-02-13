@@ -46,7 +46,9 @@ const (
 	BIND = syscall.MS_BIND
 
 	// RBIND remounts a subtree and all possible submounts somewhere else.
-	RBIND = syscall.MS_BIND | syscall.MS_REC
+	// Patched by CircleCI
+	// MS_REC is not allowed by our AppArmor policy
+	RBIND = syscall.MS_BIND //| syscall.MS_REC
 
 	// UNBINDABLE creates a mount which cannot be cloned through a bind operation.
 	UNBINDABLE = syscall.MS_UNBINDABLE

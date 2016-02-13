@@ -727,8 +727,11 @@ loop:
 			hdr.Gid = xGID
 		}
 
+		// Patched by CircleCI
+		// Some image tar tries to create device files that are not allowed in unpriv container.
+		// Ex. pulling ubuntu will create "/dev/agpgart" with mknod and this breaks.
 		if err := createTarFile(path, dest, hdr, trBuf, !options.NoLchown, options.ChownOpts); err != nil {
-			return err
+			//return err
 		}
 
 		// Directory mtimes must be handled at the end to avoid further

@@ -50,8 +50,9 @@ func Init(home string, options []string, uidMaps, gidMaps []idtools.IDMap) (grap
 		return nil, err
 	}
 
+	// Patched by CircleCI
 	if err := mount.MakePrivate(home); err != nil {
-		return nil, err
+		//return nil, err
 	}
 
 	driver := &Driver{

@@ -452,7 +452,9 @@ func (d *Driver) setupMounts(container *configs.Config, c *execdriver.Command) e
 			})
 			continue
 		}
-		flags := syscall.MS_BIND | syscall.MS_REC
+		// Patched by CircleCI
+		// MS_REC is not allowed by our AppArmor policy
+		flags := syscall.MS_BIND //| syscall.MS_REC
 		var pFlag int
 		if !m.Writable {
 			flags |= syscall.MS_RDONLY

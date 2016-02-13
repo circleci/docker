@@ -202,9 +202,13 @@ func (p *initProcess) start() (err error) {
 
 	// Do this before syncing with child so that no children
 	// can escape the cgroup
-	if err := p.manager.Apply(p.pid()); err != nil {
-		return newSystemError(err)
-	}
+
+	// Patched by CircleCI
+        // We dislabe cgroup support since cgroup insinde Docker container
+        // is useless as cgroup is applied for unprivileged container by LXC host.
+	//if err := p.manager.Apply(p.pid()); err != nil {
+	//	return newSystemError(err)
+	//}
 	defer func() {
 		if err != nil {
 			// TODO: should not be the responsibility to call here

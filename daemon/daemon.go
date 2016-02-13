@@ -766,9 +766,13 @@ func NewDaemon(config *Config, registryService *registry.Service) (daemon *Daemo
 	sysInfo := sysinfo.New(false)
 	// Check if Devices cgroup is mounted, it is hard requirement for container security,
 	// on Linux/FreeBSD.
-	if runtime.GOOS != "windows" && !sysInfo.CgroupDevicesEnabled {
-		return nil, fmt.Errorf("Devices cgroup isn't mounted")
-	}
+
+	// Patched by CircleCI
+	// We dislabe cgroup support since cgroup insinde Docker container
+	// is useless as cgroup is applied for unprivileged container by LXC host.
+	//if runtime.GOOS != "windows" && !sysInfo.CgroupDevicesEnabled {
+	//	return nil, fmt.Errorf("Devices cgroup isn't mounted")
+	//}
 
 	ed, err := execdrivers.NewDriver(config.ExecOptions, config.ExecRoot, config.Root, sysInfo)
 	if err != nil {
