@@ -44,5 +44,5 @@ test:
 
     #### Test docker cp ####
     - export n=test-cp && docker run --name $n ubuntu true && docker cp $n:/etc/hosts . && cat hosts
-    - export n=test-cp && touch hello.txt && docker cp hello.txt $n:/hello.txt
+    - export n=test-cp && echo "hello" > hello.txt && docker cp hello.txt $n:/hello.txt
 
