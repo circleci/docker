@@ -167,7 +167,20 @@ func mountToRootfs(m *configs.Mount, rootfs, mountLabel string) error {
 		if err := os.MkdirAll(dest, 0755); err != nil {
 			return err
 		}
-		return mountPropagate(m, rootfs, mountLabel)
+		//<<<< Patched by CircleCI
+		//
+		// We need to mount /dev/pts but the Docker tries to mount with
+		// MS_NOSUID|MS_NOEXEC optino which is not allowed by our AppArmor policy.
+		//return mountPropagate(m, rootfs, mountLabel)
+		data := label.FormatMountLabel(m.Data, mountLabel)
+
+		// Bind mount didn't work here for some reasons.
+		// Also make sure `data` has "newinstance,ptmxmode=0666,mode=0" to mount pts correctly
+	        // See: https://github.com/lxc/lxc/blob/master/src/lxc/conf.c
+		if err := syscall.Mount(m.Source, dest, m.Device, syscall.MS_MGC_VAL, data); err!=nil {
+			return err
+		}
+		// Patched by CircleCI >>>>
 	case "securityfs":
 		if err := os.MkdirAll(dest, 0755); err != nil {
 			return err
