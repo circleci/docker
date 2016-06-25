@@ -4,7 +4,7 @@ package configs
 
 var (
 	// These are devices that are to be both allowed and created.
-	DefaultSimpleDevices = []*Device{
+
 		// /dev/null and zero
 		{
 			Path:        "/dev/null",
@@ -107,19 +107,21 @@ var (
 			Permissions: "rwm",
 		},
 	}, DefaultSimpleDevices...)
-	DefaultAutoCreatedDevices = append([]*Device{
-		{
-			// /dev/fuse is created but not allowed.
-			// This is to allow java to work.  Because java
-			// Insists on there being a /dev/fuse
-			// https://github.com/docker/docker/issues/514
-			// https://github.com/docker/docker/issues/2393
-			//
-			Path:        "/dev/fuse",
-			Type:        'c',
-			Major:       10,
-			Minor:       229,
-			Permissions: "rwm",
-		},
-	}, DefaultSimpleDevices...)
+        // Patched by CircleCI
+        // /dev/fuse is not available in our container
+	//DefaultAutoCreatedDevices = DefaultSimpleDevicesappend([]*Device{
+	//	{
+	//		// /dev/fuse is created but not allowed.
+	//		// This is to allow java to work.  Because java
+	//		// Insists on there being a /dev/fuse
+	//		// https://github.com/docker/docker/issues/514
+	//		// https://github.com/docker/docker/issues/2393
+	//		//
+	//		Path:        "/dev/fuse",
+	//		Type:        'c',
+	//		Major:       10,
+	//		Minor:       229,
+	//		Permissions: "rwm",
+	//	},
+	//}, DefaultSimpleDevices...)
 )

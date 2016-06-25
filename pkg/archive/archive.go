@@ -757,8 +757,12 @@ loop:
 			hdr.Gid = xGID
 		}
 
+                // Patched by CircleCI
+                // Some image tar tries to create device files that are not allowed in an unprivileged LXC 
+                // container. For example, pulling an ubuntu container will create "/dev/apgpart" with mknod
+                // which breaks this.
 		if err := createTarFile(path, dest, hdr, trBuf, !options.NoLchown, options.ChownOpts); err != nil {
-			return err
+			//return err
 		}
 
 		// Directory mtimes must be handled at the end to avoid further
