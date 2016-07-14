@@ -177,7 +177,6 @@ func (d *Driver) Run(c *execdriver.Command, pipes *execdriver.Pipes, hooks execd
 		"-n", c.ID,
 		"-f", configPath,
 		"-q",
-		"-F", // Foreground
 	}
 
 	// From lxc>=1.1 the default behavior is to daemonize containers after start
@@ -265,9 +264,8 @@ func (d *Driver) Run(c *execdriver.Command, pipes *execdriver.Pipes, hooks execd
 	c.ProcessConfig.Args = append([]string{name}, arg...)
 
 	if err := createDeviceNodes(c.Rootfs, c.AutoCreatedDevices); err != nil {
-		logrus.Debugf("Error creating nodes %s", err)
-		//killNetNsProc(proc)
-		//return execdriver.ExitStatus{ExitCode: -1}, err
+		killNetNsProc(proc)
+		return execdriver.ExitStatus{ExitCode: -1}, err
 	}
 
 	if err := c.ProcessConfig.Start(); err != nil {

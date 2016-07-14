@@ -1448,10 +1448,9 @@ func (container *Container) setupIpcDirs() error {
 		if err := syscall.Mount("mqueue", mqueuePath, "mqueue", uintptr(syscall.MS_NOEXEC|syscall.MS_NOSUID|syscall.MS_NODEV), ""); err != nil {
 			return fmt.Errorf("mounting mqueue mqueue : %s", err)
 		}
-
-		//if err := os.Chown(mqueuePath, rootUID, rootGID); err != nil {
-		//	return err
-		//}
+		if err := os.Chown(mqueuePath, rootUID, rootGID); err != nil {
+			return err
+		}
 	}
 
 	return nil
