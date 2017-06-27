@@ -25,7 +25,7 @@ test:
     - export n=test-publish-all && docker run -d --name $n -P nginx && sleep 3 && curl $(docker port $n | grep 80 |awk '{print $3}')
 
     # Test --link
-    - export n=test-link && docker run -d --name $n nginx && docker run --link $n ubuntu bash -c "apt-get install -y curl && curl $n"
+    - export n=test-link && docker run -d --name $n nginx && docker run --link $n ubuntu bash -c "apt-get update; apt-get install -y curl && curl $n"
 
     # Test -v (--volume)
     - echo "mount me" > ./mountme.txt && docker run -v /home/ubuntu/docker:/tmp/test-vol ubuntu cat /tmp/test-vol/mountme.txt
