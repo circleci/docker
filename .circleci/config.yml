@@ -1,0 +1,58 @@
+version: 2.1
+
+executors:
+  default:
+    machine:
+      image: ubuntu-2004:current
+      docker_layer_caching: true
+workflows:
+  main-workflow:
+    jobs:
+      - build
+      - unit-test:
+          requires:
+            - build
+      - integration-test:
+          requires:
+            - build
+      - deploy:
+          requires:
+            - integration-test
+            - unit-test
+
+jobs:
+  build:
+    executor: default
+    steps:
+      - checkout
+      - run: mkdir -p bundles/binary-daemon/
+      - run: make build binary
+      - persist_to_workspace:
+          root: .
+          paths:
+            - bundles
+  unit-test:
+    executor: default
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run: make test-unit
+      - store_test_results:
+          path: bundles/
+  integration-test:
+    executor: default
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run: make test-integration
+      - store_test_results:
+          path: bundles/
+  deploy:
+    executor: default
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run: echo TODO

@@ -101,6 +101,8 @@ func TestPortMappingConfig(t *testing.T) {
 }
 
 func TestPortMappingV6Config(t *testing.T) {
+	t.Skip("Need IPv6 enabled")
+
 	defer testutils.SetupTestOSContext(t)()
 	if err := loopbackUp(); err != nil {
 		t.Fatalf("Could not bring loopback iface up: %v", err)
