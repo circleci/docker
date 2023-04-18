@@ -1,4 +1,4 @@
-FROM ubuntu
+FROM ubuntu:22.10
 ENV name value
 ENV name=value
 ENV name=value name2=value2
