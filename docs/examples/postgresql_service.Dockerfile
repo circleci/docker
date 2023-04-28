@@ -2,7 +2,7 @@
 # example Dockerfile for https://docs.docker.com/examples/postgresql_service/
 #
 
-FROM ubuntu
+FROM ubuntu:kinetic-20220830
 MAINTAINER SvenDowideit@docker.com
 
 # Add the PostgreSQL PGP key to verify their Debian packages.
