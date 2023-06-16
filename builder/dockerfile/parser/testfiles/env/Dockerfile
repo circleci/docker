@@ -1,4 +1,4 @@
-FROM ubuntu
+FROM ubuntu:kinetic
 ENV name value
 ENV name=value
 ENV name=value name2=value2
